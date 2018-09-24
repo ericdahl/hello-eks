@@ -5,3 +5,6 @@ variable "admin_cidr" {
 variable "cluster_name" {
   default = "hello-eks"
 }
+
+variable "key_name" {
+}
