@@ -1,5 +1,3 @@
-
-
 resource "aws_security_group" "demo-node" {
   name        = "terraform-eks-demo-node"
   description = "Security group for all nodes in the cluster"
@@ -40,8 +38,6 @@ resource "aws_security_group_rule" "demo-node-ingress-cluster" {
   type                     = "ingress"
 }
 
-
-
 resource "aws_security_group_rule" "demo-cluster-ingress-node-https" {
   description              = "Allow pods to communicate with the cluster API Server"
   from_port                = 443
@@ -52,8 +48,6 @@ resource "aws_security_group_rule" "demo-cluster-ingress-node-https" {
   type                     = "ingress"
 }
 
-
-
 data "aws_ami" "eks-worker" {
   filter {
     name   = "name"
@@ -63,7 +57,6 @@ data "aws_ami" "eks-worker" {
   most_recent = true
   owners      = ["602401143452"] # Amazon Account ID
 }
-
 
 # This data source is included for ease of sample architecture deployment
 # and can be swapped out as necessary.
@@ -82,21 +75,22 @@ set -o xtrace
 USERDATA
 }
 
-
 resource "aws_launch_configuration" "worker" {
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   iam_instance_profile        = "${aws_iam_instance_profile.node.name}"
   image_id                    = "${data.aws_ami.eks-worker.id}"
   instance_type               = "m4.large"
   name_prefix                 = "terraform-eks-demo"
-  security_groups             = [
+
+  security_groups = [
     "${aws_security_group.cluster.id}",
     "${module.vpc.sg_allow_22}",
-    "${module.vpc.sg_allow_egress}"
+    "${module.vpc.sg_allow_egress}",
   ]
-  user_data_base64            = "${base64encode(local.demo-node-userdata)}"
 
-    key_name = "${var.key_name}"
+  user_data_base64 = "${base64encode(local.demo-node-userdata)}"
+
+  key_name = "${var.key_name}"
 
   lifecycle {
     create_before_destroy = true
@@ -109,13 +103,12 @@ resource "aws_autoscaling_group" "demo" {
   max_size             = 2
   min_size             = 1
   name                 = "terraform-eks-demo"
-  vpc_zone_identifier  =[
+
+  vpc_zone_identifier = [
     "${module.vpc.subnet_private1}",
     "${module.vpc.subnet_private2}",
     "${module.vpc.subnet_private3}",
   ]
-
-
 
   tag {
     key                 = "Name"

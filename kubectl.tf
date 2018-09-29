@@ -28,5 +28,3 @@ users:
         - "${var.cluster_name}"
 KUBECONFIG
 }
-
-

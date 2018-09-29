@@ -27,11 +27,9 @@ resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" 
   role       = "${aws_iam_role.cluster.name}"
 }
 
-
 //
 // Worker Node
 //
-
 
 resource "aws_iam_role" "node" {
   name = "${var.cluster_name}_node"
@@ -71,5 +69,3 @@ resource "aws_iam_instance_profile" "node" {
   name = "${var.cluster_name}_node"
   role = "${aws_iam_role.node.name}"
 }
-
-

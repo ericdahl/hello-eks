@@ -5,6 +5,14 @@ provider "aws" {
 module "vpc" {
   source        = "github.com/ericdahl/tf-vpc"
   admin_ip_cidr = "${var.admin_cidr}"
+
+  tags = {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+  }
 }
 
 resource "aws_eks_cluster" "cluster" {
@@ -42,5 +50,3 @@ resource "aws_security_group_rule" "cluster_0" {
   //  source_security_group_id = "${aws_security_group.cluster.id}"
   self = true
 }
-
-

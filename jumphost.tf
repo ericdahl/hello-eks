@@ -1,4 +1,3 @@
-
 data "aws_ami" "freebsd_11" {
   most_recent = true
 
