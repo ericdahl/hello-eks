@@ -98,10 +98,12 @@ resource "aws_launch_configuration" "worker" {
 }
 
 resource "aws_autoscaling_group" "demo" {
-  desired_capacity     = 2
+
   launch_configuration = "${aws_launch_configuration.worker.id}"
-  max_size             = 2
+
   min_size             = 1
+  desired_capacity     = 3
+  max_size             = 3
   name                 = "terraform-eks-demo"
 
   vpc_zone_identifier = [
