@@ -1,0 +1,4 @@
+- full NLB/ALB demo
+- autoscaling
+- draining
+- metrics..

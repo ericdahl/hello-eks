@@ -37,6 +37,13 @@ resource "aws_security_group" "cluster" {
   vpc_id      = "${module.vpc.vpc_id}"
   name        = "${var.cluster_name}_cluster"
   description = "Allows communication between k8s nodes"
+
+  tags {
+    Name = "${var.cluster_name}_cluster"
+
+    // necessary for k8s Service to initalize
+    KubernetesCluster = "${var.cluster_name}"
+  }
 }
 
 resource "aws_security_group_rule" "cluster_0" {
