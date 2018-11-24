@@ -7,6 +7,7 @@ metadata:
     app: nginx
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "Name=k8s-nlb-nginx"
 spec:
   externalTrafficPolicy: Local
   ports:

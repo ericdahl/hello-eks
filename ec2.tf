@@ -75,12 +75,14 @@ set -o xtrace
 USERDATA
 }
 
-resource "aws_launch_configuration" "worker" {
+resource "aws_launch_configuration" "worker_m4_large" {
   associate_public_ip_address = false
   iam_instance_profile        = "${aws_iam_instance_profile.node.name}"
   image_id                    = "${data.aws_ami.eks-worker.id}"
   instance_type               = "m4.large"
-  name_prefix                 = "terraform-eks-demo"
+  name_prefix                 = "worker_m4_large"
+
+  spot_price = ".1"
 
   security_groups = [
     "${aws_security_group.cluster.id}",
@@ -97,14 +99,68 @@ resource "aws_launch_configuration" "worker" {
   }
 }
 
-resource "aws_autoscaling_group" "demo" {
+resource "aws_autoscaling_group" "worker_m4_large" {
 
-  launch_configuration = "${aws_launch_configuration.worker.id}"
+  launch_configuration = "${aws_launch_configuration.worker_m4_large.id}"
 
   min_size             = 1
   desired_capacity     = 3
   max_size             = 3
-  name                 = "terraform-eks-demo"
+  name                 = "worker_m4_large"
+
+  vpc_zone_identifier = [
+    "${module.vpc.subnet_private1}",
+    "${module.vpc.subnet_private2}",
+    "${module.vpc.subnet_private3}",
+  ]
+
+  tag {
+    key                 = "Name"
+    value               = "terraform-eks-demo"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "kubernetes.io/cluster/${var.cluster_name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+}
+
+
+
+resource "aws_launch_configuration" "worker_m4_2xlarge" {
+  associate_public_ip_address = false
+  iam_instance_profile        = "${aws_iam_instance_profile.node.name}"
+  image_id                    = "${data.aws_ami.eks-worker.id}"
+  instance_type               = "m4.2xlarge"
+  name_prefix                 = "worker_m4_2xlarge"
+
+  spot_price = ".4"
+
+  security_groups = [
+    "${aws_security_group.cluster.id}",
+    "${module.vpc.sg_allow_22}",
+    "${module.vpc.sg_allow_egress}",
+  ]
+
+  user_data_base64 = "${base64encode(local.demo-node-userdata)}"
+
+  key_name = "${var.key_name}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_autoscaling_group" "worker_m4_2xlarge" {
+
+  launch_configuration = "${aws_launch_configuration.worker_m4_2xlarge.id}"
+
+  min_size             = 1
+  desired_capacity     = 1
+  max_size             = 1
+  name                 = "worker_m4_2xlarge"
 
   vpc_zone_identifier = [
     "${module.vpc.subnet_private1}",
