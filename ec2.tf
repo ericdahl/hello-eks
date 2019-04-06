@@ -54,6 +54,11 @@ data "aws_ami" "eks-worker" {
     values = ["amazon-eks-node-v*"]
   }
 
+  filter {
+    name = "description"
+    values = ["*AmazonLinux2*"]
+  }
+
   most_recent = true
   owners      = ["602401143452"] # Amazon Account ID
 }
