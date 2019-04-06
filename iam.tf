@@ -69,3 +69,34 @@ resource "aws_iam_instance_profile" "node" {
   name = "${var.cluster_name}_node"
   role = "${aws_iam_role.node.name}"
 }
+
+
+
+resource "aws_iam_policy" "cluster_autoscale" {
+  name        = "cluster_autoscale"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeTags",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+# TODO: identify how to remove this and attach only to cluster-autoscaler deployment pods
+resource "aws_iam_role_policy_attachment" "node_cluster_autoscale" {
+  policy_arn = "${aws_iam_policy.cluster_autoscale.arn}"
+  role = "${aws_iam_role.node.name}"
+}

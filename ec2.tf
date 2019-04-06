@@ -110,7 +110,7 @@ resource "aws_autoscaling_group" "worker_m4_large" {
 
   min_size             = 1
   desired_capacity     = 3
-  max_size             = 3
+  max_size             = 10
   name                 = "worker_m4_large"
 
   vpc_zone_identifier = [
@@ -129,6 +129,18 @@ resource "aws_autoscaling_group" "worker_m4_large" {
     key                 = "kubernetes.io/cluster/${var.cluster_name}"
     value               = "owned"
     propagate_at_launch = true
+  }
+
+  tag {
+    key = "k8s.io/cluster-autoscaler/enabled"
+    value = "enabled"
+    propagate_at_launch = false
+  }
+
+  tag {
+    key = "k8s.io/cluster-autoscaler/${aws_eks_cluster.cluster.name}"
+    value = "enabled"
+    propagate_at_launch = false
   }
 }
 
@@ -163,8 +175,8 @@ resource "aws_autoscaling_group" "worker_m4_2xlarge" {
   launch_configuration = "${aws_launch_configuration.worker_m4_2xlarge.id}"
 
   min_size             = 1
-  desired_capacity     = 1
-  max_size             = 1
+  desired_capacity     = 2
+  max_size             = 10
   name                 = "worker_m4_2xlarge"
 
   vpc_zone_identifier = [
@@ -184,4 +196,17 @@ resource "aws_autoscaling_group" "worker_m4_2xlarge" {
     value               = "owned"
     propagate_at_launch = true
   }
+
+  tag {
+    key = "k8s.io/cluster-autoscaler/enabled"
+    value = "enabled"
+    propagate_at_launch = false
+  }
+
+  tag {
+    key = "k8s.io/cluster-autoscaler/${aws_eks_cluster.cluster.name}"
+    value = "enabled"
+    propagate_at_launch = false
+  }
+
 }
