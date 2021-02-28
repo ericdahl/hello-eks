@@ -15,16 +15,17 @@ resource "aws_iam_role" "cluster" {
   ]
 }
 POLICY
+
 }
 
 resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = "${aws_iam_role.cluster.name}"
+  role       = aws_iam_role.cluster.name
 }
 
 resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = "${aws_iam_role.cluster.name}"
+  role       = aws_iam_role.cluster.name
 }
 
 //
@@ -48,32 +49,31 @@ resource "aws_iam_role" "node" {
   ]
 }
 POLICY
+
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = "${aws_iam_role.node.name}"
+  role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = "${aws_iam_role.node.name}"
+  role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = "${aws_iam_role.node.name}"
+  role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_instance_profile" "node" {
   name = "${var.cluster_name}_node"
-  role = "${aws_iam_role.node.name}"
+  role = aws_iam_role.node.name
 }
 
-
-
 resource "aws_iam_policy" "cluster_autoscale" {
-  name        = "cluster_autoscale"
+  name = "cluster_autoscale"
 
   policy = <<EOF
 {
@@ -93,10 +93,12 @@ resource "aws_iam_policy" "cluster_autoscale" {
     ]
 }
 EOF
+
 }
 
 # TODO: identify how to remove this and attach only to cluster-autoscaler deployment pods
 resource "aws_iam_role_policy_attachment" "node_cluster_autoscale" {
-  policy_arn = "${aws_iam_policy.cluster_autoscale.arn}"
-  role = "${aws_iam_role.node.name}"
+  policy_arn = aws_iam_policy.cluster_autoscale.arn
+  role       = aws_iam_role.node.name
 }
+

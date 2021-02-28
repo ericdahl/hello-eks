@@ -19,11 +19,11 @@ data "aws_ami" "freebsd_11" {
 }
 
 resource "aws_instance" "jumphost" {
-  ami                    = "${data.aws_ami.freebsd_11.image_id}"
+  ami                    = data.aws_ami.freebsd_11.image_id
   instance_type          = "t2.small"
-  subnet_id              = "${module.vpc.subnet_public1}"
-  vpc_security_group_ids = ["${module.vpc.sg_allow_22}", "${module.vpc.sg_allow_egress}"]
-  key_name               = "${var.key_name}"
+  subnet_id              = module.vpc.subnet_public1
+  vpc_security_group_ids = [module.vpc.sg_allow_22, module.vpc.sg_allow_egress]
+  key_name               = var.key_name
 
   user_data = <<EOF
 #!/usr/bin/env sh
@@ -35,7 +35,9 @@ pkg install -y bash
 chsh -s /usr/local/bin/bash ec2-user
 EOF
 
-  tags {
+
+  tags = {
     Name = "jumphost"
   }
 }
+

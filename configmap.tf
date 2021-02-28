@@ -15,8 +15,9 @@ data:
         - system:bootstrappers
         - system:nodes
 CONFIGMAPAWSAUTH
+
 }
 
 output "config-map-aws-auth" {
-  value = "${local.config-map-aws-auth}"
+  value = local.config-map-aws-auth
 }
