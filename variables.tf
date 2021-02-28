@@ -6,6 +6,9 @@ variable "cluster_name" {
   default = "hello-eks"
 }
 
-variable "key_name" {
+variable "public_key" {
 }
 
+variable "name" {
+  default = "hello-eks"
+}

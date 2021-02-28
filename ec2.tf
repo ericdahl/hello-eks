@@ -97,7 +97,7 @@ resource "aws_launch_configuration" "worker_m4_large" {
 
   user_data_base64 = base64encode(local.demo-node-userdata)
 
-  key_name = var.key_name
+  key_name = aws_key_pair.default.key_name
 
   lifecycle {
     create_before_destroy = true
@@ -160,7 +160,7 @@ resource "aws_launch_configuration" "worker_m4_2xlarge" {
 
   user_data_base64 = base64encode(local.demo-node-userdata)
 
-  key_name = var.key_name
+  key_name = aws_key_pair.default.key_name
 
   lifecycle {
     create_before_destroy = true
