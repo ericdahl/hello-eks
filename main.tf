@@ -33,6 +33,27 @@ resource "aws_eks_cluster" "cluster" {
   }
 }
 
+resource "aws_eks_node_group" "default" {
+  cluster_name = aws_eks_cluster.cluster.name
+  node_group_name = var.name
+  node_role_arn = aws_iam_role.node.arn
+  subnet_ids = [
+    module.vpc.subnet_private1,
+    module.vpc.subnet_private2,
+    module.vpc.subnet_private3,
+  ]
+  scaling_config {
+    desired_size = 3
+    max_size = 3
+    min_size = 3
+  }
+
+  remote_access {
+    ec2_ssh_key = aws_key_pair.default.key_name
+    source_security_group_ids = [aws_security_group.jumphost.id]
+  }
+}
+
 resource "aws_security_group" "cluster" {
   vpc_id      = module.vpc.vpc_id
   name        = "${var.cluster_name}_cluster"

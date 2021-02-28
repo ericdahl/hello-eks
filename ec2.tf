@@ -46,6 +46,20 @@ resource "aws_security_group_rule" "demo_cluster_ingress_node_https" {
   type                     = "ingress"
 }
 
+resource "aws_security_group_rule" "demo_node_ssh_jumphost" {
+
+  security_group_id = aws_security_group.demo_node.id
+  type = "ingress"
+  protocol = "tcp"
+  from_port = 22
+  to_port = 22
+
+
+
+
+  source_security_group_id = aws_security_group.jumphost.id
+}
+
 data "aws_ami" "eks_worker" {
   filter {
     name   = "name"
@@ -91,6 +105,7 @@ resource "aws_launch_configuration" "worker_m4_large" {
 
   security_groups = [
     aws_security_group.cluster.id,
+    aws_security_group.demo_node.id,
     module.vpc.sg_allow_22,
     module.vpc.sg_allow_egress,
   ]
