@@ -1,4 +1,4 @@
-resource "aws_security_group" "demo-node" {
+resource "aws_security_group" "demo_node" {
   name        = "terraform-eks-demo-node"
   description = "Security group for all nodes in the cluster"
   vpc_id      = module.vpc.vpc_id
@@ -16,37 +16,37 @@ resource "aws_security_group" "demo-node" {
   }
 }
 
-resource "aws_security_group_rule" "demo-node-ingress-self" {
+resource "aws_security_group_rule" "demo_node_ingress_self" {
   description              = "Allow node to communicate with each other"
   from_port                = 0
   protocol                 = "-1"
-  security_group_id        = aws_security_group.demo-node.id
-  source_security_group_id = aws_security_group.demo-node.id
+  security_group_id        = aws_security_group.demo_node.id
+  source_security_group_id = aws_security_group.demo_node.id
   to_port                  = 65535
   type                     = "ingress"
 }
 
-resource "aws_security_group_rule" "demo-node-ingress-cluster" {
+resource "aws_security_group_rule" "demo_node_ingress_cluster" {
   description              = "Allow worker Kubelets and pods to receive communication from the cluster control plane"
   from_port                = 1025
   protocol                 = "tcp"
-  security_group_id        = aws_security_group.demo-node.id
+  security_group_id        = aws_security_group.demo_node.id
   source_security_group_id = aws_security_group.cluster.id
   to_port                  = 65535
   type                     = "ingress"
 }
 
-resource "aws_security_group_rule" "demo-cluster-ingress-node-https" {
+resource "aws_security_group_rule" "demo_cluster_ingress_node_https" {
   description              = "Allow pods to communicate with the cluster API Server"
   from_port                = 443
   protocol                 = "tcp"
   security_group_id        = aws_security_group.cluster.id
-  source_security_group_id = aws_security_group.demo-node.id
+  source_security_group_id = aws_security_group.demo_node.id
   to_port                  = 443
   type                     = "ingress"
 }
 
-data "aws_ami" "eks-worker" {
+data "aws_ami" "eks_worker" {
   filter {
     name   = "name"
     values = ["amazon-eks-node-v*"]
@@ -83,7 +83,7 @@ USERDATA
 resource "aws_launch_configuration" "worker_m4_large" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.eks-worker.id
+  image_id                    = data.aws_ami.eks_worker.id
   instance_type               = "m4.large"
   name_prefix                 = "worker_m4_large"
 
@@ -146,7 +146,7 @@ resource "aws_autoscaling_group" "worker_m4_large" {
 resource "aws_launch_configuration" "worker_m4_2xlarge" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.eks-worker.id
+  image_id                    = data.aws_ami.eks_worker.id
   instance_type               = "m4.2xlarge"
   name_prefix                 = "worker_m4_2xlarge"
 
