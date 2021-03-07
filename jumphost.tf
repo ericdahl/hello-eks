@@ -8,13 +8,13 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_instance" "jumphost" {
-  ami                    = data.aws_ssm_parameter.amazon_linux_2.value
-  instance_type          = "t2.small"
-  subnet_id              = module.vpc.subnet_public1
+  ami           = data.aws_ssm_parameter.amazon_linux_2.value
+  instance_type = "t2.small"
+  subnet_id     = module.vpc.subnet_public1
   vpc_security_group_ids = [
     aws_security_group.jumphost.id
   ]
-  key_name               = aws_key_pair.default.key_name
+  key_name = aws_key_pair.default.key_name
 
   tags = {
     Name = "jumphost"
@@ -23,23 +23,23 @@ resource "aws_instance" "jumphost" {
 
 resource "aws_security_group" "jumphost" {
   vpc_id = module.vpc.vpc_id
-  name = "${var.name}-jumphost"
+  name   = "${var.name}-jumphost"
 }
 
 resource "aws_security_group_rule" "jumphost_egress_all" {
   security_group_id = aws_security_group.jumphost.id
-  type = "egress"
-  protocol = "-1"
-  from_port = 0
-  to_port = 0
-  cidr_blocks = ["0.0.0.0/0"]
+  type              = "egress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 resource "aws_security_group_rule" "jumphost_ingress_ssh" {
   security_group_id = aws_security_group.jumphost.id
-  type = "ingress"
-  protocol = "tcp"
-  from_port = 22
-  to_port = 22
-  cidr_blocks = [var.admin_cidr]
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 22
+  to_port           = 22
+  cidr_blocks       = [var.admin_cidr]
 }

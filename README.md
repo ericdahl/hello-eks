@@ -1,6 +1,25 @@
 # hello-eks
 basic example of AWS EKS
 
+# Quick start
+
+```
+terraform apply
+```
+
+## Dashboard
+
+```
+$ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}'
+
+$ kubectl proxy
+```
+
+<http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/overview?namespace=default>
+
+## aws-load-balancer-controller
+
+See https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
 
 # notes
 

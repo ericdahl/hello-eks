@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cluster" {
-  name = "${var.cluster_name}_role"
+  name = "${var.name}-cluster"
 
   assume_role_policy = <<POLICY
 {
@@ -18,22 +18,22 @@ POLICY
 
 }
 
-resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSClusterPolicy" {
+resource "aws_iam_role_policy_attachment" "cluster_managed_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.cluster.name
 }
 
-resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = aws_iam_role.cluster.name
-}
-
+//resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" {
+//  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
+//  role       = aws_iam_role.cluster.name
+//}
 //
-// Worker Node
+////
+//// Worker Node
+////
 //
-
 resource "aws_iam_role" "node" {
-  name = "${var.cluster_name}_node"
+  name = "${var.name}-node"
 
   assume_role_policy = <<POLICY
 {
@@ -57,6 +57,10 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   role       = aws_iam_role.node.name
 }
 
+
+# TODO: hack
+#  NodeCreationFailure: Unhealthy nodes in the kubernetes cluster.
+# https://docs.aws.amazon.com/eks/latest/userguide/cni-iam-role.html
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.node.name
@@ -66,39 +70,80 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.node.name
 }
+//
+//resource "aws_iam_instance_profile" "node" {
+//  name = "${var.cluster_name}_node"
+//  role = aws_iam_role.node.name
+//}
+//
+//resource "aws_iam_policy" "cluster_autoscale" {
+//  name = "cluster_autoscale"
+//
+//  policy = <<EOF
+//{
+//    "Version": "2012-10-17",
+//    "Statement": [
+//        {
+//            "Effect": "Allow",
+//            "Action": [
+//                "autoscaling:DescribeAutoScalingGroups",
+//                "autoscaling:DescribeAutoScalingInstances",
+//                "autoscaling:DescribeTags",
+//                "autoscaling:SetDesiredCapacity",
+//                "autoscaling:TerminateInstanceInAutoScalingGroup"
+//            ],
+//            "Resource": "*"
+//        }
+//    ]
+//}
+//EOF
+//
+//}
+//
+//# TODO: identify how to remove this and attach only to cluster-autoscaler deployment pods
+//resource "aws_iam_role_policy_attachment" "node_cluster_autoscale" {
+//  policy_arn = aws_iam_policy.cluster_autoscale.arn
+//  role       = aws_iam_role.node.name
+//}
+//
 
-resource "aws_iam_instance_profile" "node" {
-  name = "${var.cluster_name}_node"
-  role = aws_iam_role.node.name
+
+resource "aws_iam_policy" "aws_load_balancer_controller" {
+  name   = "${var.name}-aws-load-balancer-controller"
+  policy = file("templates/iam/policy/k8s-load-balancer.json")
 }
 
-resource "aws_iam_policy" "cluster_autoscale" {
-  name = "cluster_autoscale"
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
+  url             = aws_eks_cluster.default.identity[0].oidc[0].issuer
+}
 
-  policy = <<EOF
+resource "aws_iam_role" "aws_load_balancer_controller" {
+  name = "${var.name}-aws-load-balancer-controller"
+
+  assume_role_policy = <<EOF
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:DescribeAutoScalingGroups",
-                "autoscaling:DescribeAutoScalingInstances",
-                "autoscaling:DescribeTags",
-                "autoscaling:SetDesiredCapacity",
-                "autoscaling:TerminateInstanceInAutoScalingGroup"
-            ],
-            "Resource": "*"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "${aws_iam_openid_connect_provider.eks.id}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${aws_iam_openid_connect_provider.eks.url}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
         }
-    ]
+      }
+    }
+  ]
 }
 EOF
-
 }
 
-# TODO: identify how to remove this and attach only to cluster-autoscaler deployment pods
-resource "aws_iam_role_policy_attachment" "node_cluster_autoscale" {
-  policy_arn = aws_iam_policy.cluster_autoscale.arn
-  role       = aws_iam_role.node.name
+resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller" {
+  role       = aws_iam_role.aws_load_balancer_controller.name
+  policy_arn = aws_iam_policy.aws_load_balancer_controller.arn
 }
-

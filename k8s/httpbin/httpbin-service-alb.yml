@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: httpbin
 spec:
-  # k8s 1.18 - creates a classic ELB
   type: LoadBalancer
   selector:
     app: httpbin
