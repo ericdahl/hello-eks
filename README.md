@@ -4,18 +4,34 @@ basic example of AWS EKS
 # Quick start
 
 ```
-terraform apply
+$ terraform apply
+
+$ aws eks update-kubeconfig --name hello-eks
+
+$ kubectl annotate serviceaccount -n kube-system aws-node eks.amazonaws.com/role-arn=$(terraform output aws_iam_role_aws_k8s_serviceaccount_aws_node_arn | tr -d '"')
 ```
 
 ## Dashboard
 
 ```
-$ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}'
+$ kubectl apply -f k8s/dashboard
+
+$ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
 
 $ kubectl proxy
 ```
 
 <http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/overview?namespace=default>
+
+## kuard
+
+```
+$ kubectl apply -f k8s/kuard
+
+$ kubectl port-forward service/kuard 8080:http
+```
+
+<http://localhost:8080>
 
 ## aws-load-balancer-controller
 

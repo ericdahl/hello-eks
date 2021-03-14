@@ -17,7 +17,7 @@ resource "aws_instance" "jumphost" {
   key_name = aws_key_pair.default.key_name
 
   tags = {
-    Name = "jumphost"
+    Name = "${var.name}-jumphost"
   }
 }
 
