@@ -11,6 +11,16 @@ $ aws eks update-kubeconfig --name hello-eks
 $ kubectl annotate serviceaccount -n kube-system aws-node eks.amazonaws.com/role-arn=$(terraform output aws_iam_role_aws_k8s_serviceaccount_aws_node_arn | tr -d '"')
 ```
 
+## AWS Permissions to view k8s resources
+permissions to view resources
+https://docs.aws.amazon.com/eks/latest/userguide/view-kubernetes-resources.html#view-kubernetes-resources-permissions
+
+note: eksctl not new enough on freebsd
+```
+$ kubectl apply -f https://s3.us-west-2.amazonaws.com/amazon-eks/docs/eks-console-full-access.yaml
+```
+
+
 ## Dashboard
 
 ```
