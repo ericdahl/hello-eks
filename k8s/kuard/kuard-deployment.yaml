@@ -5,7 +5,7 @@ metadata:
   labels:
     app: kuard
 spec:
-  replicas: 3
+  replicas: 15
   selector:
     matchLabels:
       app: kuard
@@ -21,7 +21,8 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            memory: "24Mi"
+#            memory: "24Mi"
+            memory: "5Mi"
           limits:
             memory: "500Mi"
 
