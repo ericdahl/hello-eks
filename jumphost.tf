@@ -9,7 +9,7 @@ resource "aws_key_pair" "default" {
 
 resource "aws_instance" "jumphost" {
   ami           = data.aws_ssm_parameter.amazon_linux_2.value
-  instance_type = "t2.small"
+  instance_type = "t3.micro"
   subnet_id     = module.vpc.subnet_public1
   vpc_security_group_ids = [
     aws_security_group.jumphost.id
