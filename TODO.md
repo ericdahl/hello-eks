@@ -1,4 +1,5 @@
-- full NLB/ALB demo
+- minimal config setup, as simple as possible
+- full NLB/ALB demo, toggle-able
 - autoscaling
 - draining
 - metrics..
