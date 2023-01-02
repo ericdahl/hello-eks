@@ -1,3 +1,8 @@
+- cleanup
+  - remove commented/obsolete code
+  - review console access - use SSM?
+  - updated demo with ALB
+- 
 - minimal config setup, as simple as possible
 - full NLB/ALB demo, toggle-able
 - autoscaling
