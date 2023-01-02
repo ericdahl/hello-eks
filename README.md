@@ -7,8 +7,6 @@ basic example of AWS EKS
 $ terraform apply
 
 $ aws eks update-kubeconfig --name hello-eks
-
-$ kubectl annotate serviceaccount -n kube-system aws-node eks.amazonaws.com/role-arn=$(terraform output aws_iam_role_aws_k8s_serviceaccount_aws_node_arn | tr -d '"')
 ```
 
 ## AWS Permissions to view k8s resources
@@ -23,12 +21,14 @@ $ kubectl apply -f https://s3.us-west-2.amazonaws.com/amazon-eks/docs/eks-consol
 
 ## Dashboard
 
+TODO: figure out how to fix for k8s 1.22+
+
+Docs: https://github.com/kubernetes/dashboard/releases
+
 ```
-$ kubectl apply -f k8s/dashboard
-
-$ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
-
 $ kubectl proxy
+
+# enter token from TF output
 ```
 
 <http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/overview?namespace=default>
@@ -44,6 +44,8 @@ $ kubectl port-forward service/kuard 8080:http
 <http://localhost:8080>
 
 ## aws-load-balancer-controller
+
+TODO: review and cleanup
 
 See https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
 

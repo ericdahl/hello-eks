@@ -16,9 +16,9 @@ resource "kubernetes_annotations" "aws_node_role" {
     namespace = "kube-system"
   }
 
-    annotations = {
-        "eks.amazonaws.com/role-arn" = aws_iam_role.k8s_serviceaccount_aws_node.arn
-    }
+  annotations = {
+    "eks.amazonaws.com/role-arn" = aws_iam_role.k8s_serviceaccount_aws_node.arn
+  }
 }
 
 #resource "kubernetes_service_account" "example" {

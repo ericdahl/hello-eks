@@ -52,8 +52,8 @@ resource "aws_eks_node_group" "default" {
     kubernetes_annotations.aws_node_role
   ]
 
-#  remote_access {
-#    ec2_ssh_key               = aws_key_pair.default.key_name
-#    source_security_group_ids = [aws_security_group.jumphost.id]
-#  }
+  #  remote_access {
+  #    ec2_ssh_key               = aws_key_pair.default.key_name
+  #    source_security_group_ids = [aws_security_group.jumphost.id]
+  #  }
 }
