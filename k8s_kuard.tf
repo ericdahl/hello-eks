@@ -26,7 +26,7 @@ resource "kubernetes_deployment" "kuard" {
       }
       spec {
         container {
-          name = "kuard"
+          name  = "kuard"
           image = "gcr.io/kuar-demo/kuard-amd64:3"
           port {
             container_port = 8080
@@ -60,8 +60,8 @@ resource "kubernetes_service" "kuard_nodeport" {
 
     type = "NodePort"
     port {
-      name = "http"
-      port = 80
+      name        = "http"
+      port        = 80
       target_port = "8080"
     }
   }
