@@ -3,6 +3,16 @@ basic example of AWS EKS
 
 # Quick start
 
+currently.. FIXME
+- -target or different phases?
+
+- disable nodegroup, k8s resources
+- deploy
+- updaet kubeconfig
+- re-add k8s reseources
+- deploy
+- re-add nodegroup
+
 ```
 $ terraform apply
 
