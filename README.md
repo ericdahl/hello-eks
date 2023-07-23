@@ -3,20 +3,12 @@ basic example of AWS EKS
 
 # Quick start
 
-currently.. FIXME
-- -target or different phases?
-
-- disable nodegroup, k8s resources
-- deploy
-- updaet kubeconfig
-- re-add k8s reseources
-- deploy
-- re-add nodegroup
-
 ```
 $ terraform apply
 
 $ aws eks update-kubeconfig --name hello-eks
+
+$ kubectl run nginx --image nginx
 ```
 
 ## AWS Permissions to view k8s resources

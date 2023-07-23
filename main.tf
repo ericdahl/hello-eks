@@ -1,11 +1,17 @@
 provider "aws" {
   region = "us-east-1"
+
+  default_tags {
+    tags = {
+      Name       = "hello-eks"
+      Repository = "https://github.com/ericdahl/hello-eks"
+    }
+  }
 }
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
-
+#provider "kubernetes" {
+#  config_path = "~/.kube/config"
+#}
 
 resource "aws_cloudwatch_log_group" "control_plane" {
   name              = "/aws/eks/${var.name}/cluster"
@@ -48,9 +54,9 @@ resource "aws_eks_node_group" "default" {
     min_size     = 3
   }
 
-  depends_on = [
-    kubernetes_annotations.aws_node_role
-  ]
+  #  depends_on = [
+  #    kubernetes_annotations.aws_node_role
+  #  ]
 
   #  remote_access {
   #    ec2_ssh_key               = aws_key_pair.default.key_name
