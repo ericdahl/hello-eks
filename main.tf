@@ -9,10 +9,6 @@ provider "aws" {
   }
 }
 
-#provider "kubernetes" {
-#  config_path = "~/.kube/config"
-#}
-
 resource "aws_cloudwatch_log_group" "control_plane" {
   name              = "/aws/eks/${var.name}/cluster"
   retention_in_days = 7
