@@ -15,7 +15,6 @@ $ kubectl run nginx --image nginx
 permissions to view resources
 https://docs.aws.amazon.com/eks/latest/userguide/view-kubernetes-resources.html#view-kubernetes-resources-permissions
 
-note: eksctl not new enough on freebsd
 ```
 $ kubectl apply -f https://s3.us-west-2.amazonaws.com/amazon-eks/docs/eks-console-full-access.yaml
 ```

@@ -42,7 +42,7 @@ resource "aws_iam_role_policy_attachment" "node_ssm_core" {
 #     - nodegroup depends on role, depends on service account, depends on k8s working depends on deploy
 #     - alternative is 3 step: deploy cluster + role, deploy k8s service account, deploy nodegroup
 #
-# if neither of these options are implmented, result is:
+# if neither of these options are implemented, result is:
 #   NodeCreationFailure: Unhealthy nodes in the kubernetes cluster.
 #
 # See more at:
