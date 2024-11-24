@@ -10,7 +10,7 @@ resource "aws_key_pair" "default" {
 resource "aws_instance" "jumphost" {
  ami           = data.aws_ssm_parameter.amazon_linux_2.value
  instance_type = "t3.micro"
- subnet_id     = module.vpc.subnet_public1
+ subnet_id     = aws_subnet.public["us-east-1a"].id
  vpc_security_group_ids = [
    aws_security_group.jumphost.id
  ]
@@ -22,7 +22,7 @@ resource "aws_instance" "jumphost" {
 }
 
 resource "aws_security_group" "jumphost" {
- vpc_id = module.vpc.vpc_id
+ vpc_id = aws_vpc.default.id
  name   = "${var.name}-jumphost"
 }
 
@@ -42,4 +42,9 @@ resource "aws_security_group_rule" "jumphost_ingress_ssh" {
  from_port         = 22
  to_port           = 22
  cidr_blocks       = [var.admin_cidr]
+}
+
+
+output "jumphost" {
+ value = aws_instance.jumphost.public_ip
 }
