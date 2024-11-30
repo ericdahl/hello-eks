@@ -50,12 +50,10 @@ resource "aws_eks_node_group" "default" {
     min_size     = 3
   }
 
-  #  depends_on = [
-  #    kubernetes_annotations.aws_node_role
-  #  ]
+  ami_type = "AL2023_x86_64_STANDARD"
 
-  #  remote_access {
-  #    ec2_ssh_key               = aws_key_pair.default.key_name
-  #    source_security_group_ids = [aws_security_group.jumphost.id]
-  #  }
+   remote_access {
+     ec2_ssh_key               = aws_key_pair.default.key_name
+     source_security_group_ids = [aws_security_group.jumphost.id]
+   }
 }

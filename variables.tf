@@ -1,6 +1,4 @@
-variable "admin_cidr" {
-  default = "0.0.0.0/0"
-}
+variable "admin_cidr" {}
 
 variable "availability_zones" {
   default = [
@@ -10,8 +8,7 @@ variable "availability_zones" {
   ]
 }
 
-variable "public_key" {
-}
+variable "public_key" {}
 
 variable "name" {
   default = "hello-eks"
